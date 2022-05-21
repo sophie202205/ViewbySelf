@@ -11,15 +11,24 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 public class MyView extends View {
     //Content : activity or server(server for後端)
     //AttributeSet : 屬性設定
+    private LinkedList<HashMap<String, Float>> line;
+    private Paint paint;
 
 
     public MyView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
         setBackgroundColor(Color.GREEN);
+        line = new LinkedList<>();
+        paint = new Paint();
+        paint.setColor(Color.BLUE);
+        paint.setStrokeWidth(4);
     }
 
     @Override
@@ -35,6 +44,11 @@ public class MyView extends View {
         //canvas.drawCircle(0,0,40, paint);
         //cx,cy : 線起始座標
         //canvas.drawLine(0,0,400,400, paint);
+        for(int i = 1; i< line.size(); i++){
+            HashMap<String, Float> p0 = line.get(i-1);
+            HashMap<String, Float> p1 = line.get(i);
+            canvas.drawLine(p0.get("x"), p0.get("y"), p1.get("x"), p1.get("y"), paint);
+        }
     }
 
     // 摸一下會觸發
@@ -45,19 +59,41 @@ public class MyView extends View {
         //super.onTouchEvent(event);
         if (event.getAction() == MotionEvent.ACTION_DOWN){
             Log.v("brad", "down");
+            setFirstPoint(event);
         }else if (event.getAction() == MotionEvent.ACTION_UP){
             Log.v("brad", "up");
         }else if (event.getAction() == MotionEvent.ACTION_MOVE){
             Log.v("brad", "move");
+            setMovePoint(event);
         }
-        return false;
+        return true;
+    }
+
+    private void setFirstPoint(MotionEvent event) {
+        Float ex = event.getX() , ey = event.getY();
+        HashMap<String, Float> point = new HashMap<>();
+        point.put("x" , ex);
+        point.put("y" , ey);
+        line.add(point);
+    }
+
+    private void setMovePoint(MotionEvent event) {
+        Float ex = event.getX() , ey = event.getY();
+        HashMap<String, Float> point = new HashMap<>();
+        point.put("x" , ex);
+        point.put("y" , ey);
+        line.add(point);
+
+        //重新呼叫ondraw() -->類似java的repaint
+        invalidate();
     }
 
     /**
-     * 筆記 : clickListener() ->動作要有上下
-     * 當super.onTouchEvent(event) + return true -> 才會觸發clickListener()，因為才會有上下動作
+     * 筆記 : onclickListener() ->動作要有上下
+     * 當super.onTouchEvent(event) + return true -> 才會觸發onclickListener()，因為才會有上下動作
      * onTouchEvent() :
      *    1. super.onTouchEvent(event); ->結果回傳false
      *    2. 如果想要摸下去持續偵測，則回傳true
+     *    3. 先onTouchEvent()再onclickListener()
      */
 }
