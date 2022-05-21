@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -41,9 +42,22 @@ public class MyView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         //event.getX();//座標X
         //event.getY();//座標Y
-
-        //super.onTouchEvent(event); ->結果回傳false
-        //如果想要摸下去持續偵測，則回傳true
+        //super.onTouchEvent(event);
+        if (event.getAction() == MotionEvent.ACTION_DOWN){
+            Log.v("brad", "down");
+        }else if (event.getAction() == MotionEvent.ACTION_UP){
+            Log.v("brad", "up");
+        }else if (event.getAction() == MotionEvent.ACTION_MOVE){
+            Log.v("brad", "move");
+        }
         return false;
     }
+
+    /**
+     * 筆記 : clickListener() ->動作要有上下
+     * 當super.onTouchEvent(event) + return true -> 才會觸發clickListener()，因為才會有上下動作
+     * onTouchEvent() :
+     *    1. super.onTouchEvent(event); ->結果回傳false
+     *    2. 如果想要摸下去持續偵測，則回傳true
+     */
 }
