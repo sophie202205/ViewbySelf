@@ -17,7 +17,7 @@ import java.util.LinkedList;
 public class MyView extends View {
     //Content : activity or server(server for後端)
     //AttributeSet : 屬性設定
-    private LinkedList<HashMap<String, Float>> line;
+    private LinkedList<LinkedList<HashMap<String, Float>>> lines;
     private Paint paint;
 
 
@@ -25,7 +25,7 @@ public class MyView extends View {
         super(context, attrs);
 
         setBackgroundColor(Color.GREEN);
-        line = new LinkedList<>();
+        lines = new LinkedList<>();
         paint = new Paint();
         paint.setColor(Color.BLUE);
         paint.setStrokeWidth(4);
@@ -44,10 +44,12 @@ public class MyView extends View {
         //canvas.drawCircle(0,0,40, paint);
         //cx,cy : 線起始座標
         //canvas.drawLine(0,0,400,400, paint);
-        for(int i = 1; i< line.size(); i++){
-            HashMap<String, Float> p0 = line.get(i-1);
-            HashMap<String, Float> p1 = line.get(i);
-            canvas.drawLine(p0.get("x"), p0.get("y"), p1.get("x"), p1.get("y"), paint);
+        for(LinkedList<HashMap<String, Float>> line : lines) {
+            for (int i = 1; i < line.size(); i++) {
+                HashMap<String, Float> p0 = line.get(i - 1);
+                HashMap<String, Float> p1 = line.get(i);
+                canvas.drawLine(p0.get("x"), p0.get("y"), p1.get("x"), p1.get("y"), paint);
+            }
         }
     }
 
@@ -70,11 +72,13 @@ public class MyView extends View {
     }
 
     private void setFirstPoint(MotionEvent event) {
+        LinkedList<HashMap<String, Float>> line = new LinkedList<>();
         Float ex = event.getX() , ey = event.getY();
         HashMap<String, Float> point = new HashMap<>();
         point.put("x" , ex);
         point.put("y" , ey);
         line.add(point);
+        lines.add(line);
     }
 
     private void setMovePoint(MotionEvent event) {
@@ -82,7 +86,7 @@ public class MyView extends View {
         HashMap<String, Float> point = new HashMap<>();
         point.put("x" , ex);
         point.put("y" , ey);
-        line.add(point);
+        lines.getLast().add(point);
 
         //重新呼叫ondraw() -->類似java的repaint
         invalidate();
