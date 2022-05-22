@@ -53,6 +53,18 @@ public class MyView extends View {
         }
     }
 
+    public void clear(){
+        lines.clear();
+        invalidate();
+    }
+
+    public void undo(){
+        if(lines.size() > 0){
+            lines.removeLast();
+            invalidate();
+        }
+    }
+
     // 摸一下會觸發
     @Override
     public boolean onTouchEvent(MotionEvent event) {
